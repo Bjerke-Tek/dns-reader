@@ -2,8 +2,6 @@ package main
 
 import (
 	"bufio"
-	"encoding/csv"
-	"fmt"
 	"os"
 	"strings"
 	"sync"
@@ -11,29 +9,6 @@ import (
 	"github.com/fatih/color"
 	"github.com/olekukonko/tablewriter"
 )
-
-func saveToCSV(domain string, records []string) error {
-	filename := fmt.Sprintf("%s.csv", domain)
-	file, err := os.Create(filename)
-	if err != nil {
-		return err
-	}
-	defer file.Close()
-
-	writer := csv.NewWriter(file)
-	defer writer.Flush()
-
-	writer.Write([]string{"Record Type", "Value"})
-
-	for _, record := range records {
-		recordParts := strings.SplitN(record, " ", 2)
-		if len(recordParts) == 2 {
-			writer.Write(recordParts)
-		}
-	}
-
-	return nil
-}
 
 func main() {
 	reader := bufio.NewReader(os.Stdin)
@@ -115,7 +90,7 @@ func main() {
 				table.Render()
 
 				if saveOptions[d] {
-					err = saveToCSV(d, records)
+					err = SaveToCSV(d, records)
 					if err != nil {
 						color.Red("Error saving to CSV: %v", err)
 					} else {
